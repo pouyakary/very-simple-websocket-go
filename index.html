@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Testing Page</title>
+</head>
+<body>
+    <input type="text" id="compose-box"></input>
+    <div id="messages-display">
+
+    </div>
+
+    <script>
+        window.onload = ( ) => {
+            var socket
+            const display = document.getElementById("messages-display")
+
+            function runSocketServer() {
+                socket = new WebSocket("ws://localhost:1234/socket")
+
+                socket.addEventListener("message", function (event) {
+                    display.innerHTML += `<div class="message">${ event.data }</div>`
+                })
+            }
+
+            function registerEvents() {
+                document.getElementById("compose-box")
+                    .addEventListener("keyup", event => {
+                        if (event.keyCode === 13) {
+                            const message = event.target.value
+                            socket.send(message)
+                            event.target.value = ""
+                        }
+                    })
+            }
+
+            runSocketServer()
+            registerEvents()
+        }
+    </script>
+</body>
+</html>
